@@ -78,8 +78,19 @@ export async function registerUser(prevState: any, formData: FormData) {
     console.log("✅ Session created successfully")
 
     console.log("🚀 Registration complete, redirecting...")
-    redirect("/dashboard")
   } catch (error) {
+    // Check if this is a Next.js redirect (which is expected)
+    if (
+      error &&
+      typeof error === "object" &&
+      "digest" in error &&
+      typeof error.digest === "string" &&
+      error.digest.includes("NEXT_REDIRECT")
+    ) {
+      console.log("✅ Redirect successful")
+      throw error // Re-throw redirect errors
+    }
+
     console.error("❌ Registration error:", error)
     console.error("Error details:", {
       name: error instanceof Error ? error.name : "Unknown",
@@ -88,6 +99,9 @@ export async function registerUser(prevState: any, formData: FormData) {
     })
     return { error: `Registration failed: ${error instanceof Error ? error.message : "Unknown error"}` }
   }
+
+  // Redirect after successful registration
+  redirect("/dashboard")
 }
 
 export async function loginUser(prevState: any, formData: FormData) {
@@ -146,19 +160,11 @@ export async function loginUser(prevState: any, formData: FormData) {
     }
 
     console.log("🔐 Verifying password...")
-    console.log("Input password:", password)
-    console.log("Stored hash:", user.password_hash)
-
     const isValidPassword = await verifyPassword(password, user.password_hash)
     console.log("Password verification result:", isValidPassword)
 
     if (!isValidPassword) {
       console.log("❌ Password verification failed")
-      // Let's also try to create a new hash with the same password to compare
-      const testHash = await hashPassword(password)
-      console.log("Test hash for comparison:", testHash)
-      const testVerify = await verifyPassword(password, testHash)
-      console.log("Test hash verification:", testVerify)
       return { error: "Invalid email or password" }
     }
 
@@ -166,9 +172,19 @@ export async function loginUser(prevState: any, formData: FormData) {
     console.log("🎫 Creating session...")
     await createSession(user.id)
     console.log("✅ Session created, login successful")
-
-    redirect("/dashboard")
   } catch (error) {
+    // Check if this is a Next.js redirect (which is expected)
+    if (
+      error &&
+      typeof error === "object" &&
+      "digest" in error &&
+      typeof error.digest === "string" &&
+      error.digest.includes("NEXT_REDIRECT")
+    ) {
+      console.log("✅ Redirect successful")
+      throw error // Re-throw redirect errors
+    }
+
     console.error("❌ Login error:", error)
     console.error("Error details:", {
       name: error instanceof Error ? error.name : "Unknown",
@@ -177,6 +193,9 @@ export async function loginUser(prevState: any, formData: FormData) {
     })
     return { error: `Login failed: ${error instanceof Error ? error.message : "Unknown error"}` }
   }
+
+  // Redirect after successful login
+  redirect("/dashboard")
 }
 
 export async function logoutUser() {
