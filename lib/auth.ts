@@ -5,11 +5,32 @@ import { randomBytes } from "crypto"
 import { redirect } from "next/navigation"
 
 export async function hashPassword(password: string): Promise<string> {
-  return bcrypt.hash(password, 10)
+  console.log("🔐 Hashing password with bcrypt...")
+  const hash = await bcrypt.hash(password, 10)
+  console.log("✅ Password hashed, result length:", hash.length)
+  console.log("Hash starts with:", hash.substring(0, 10))
+  return hash
 }
 
 export async function verifyPassword(password: string, hash: string): Promise<boolean> {
-  return bcrypt.compare(password, hash)
+  console.log("🔍 Verifying password...")
+  console.log("Input password:", password)
+  console.log("Hash to verify against:", hash)
+  console.log("Hash length:", hash?.length)
+
+  if (!hash) {
+    console.log("❌ No hash provided")
+    return false
+  }
+
+  try {
+    const result = await bcrypt.compare(password, hash)
+    console.log("✅ bcrypt.compare result:", result)
+    return result
+  } catch (error) {
+    console.error("❌ Error during password verification:", error)
+    return false
+  }
 }
 
 export function generateSessionId(): string {
@@ -17,23 +38,34 @@ export function generateSessionId(): string {
 }
 
 export async function createSession(userId: number): Promise<string> {
+  console.log("🎫 Creating session for user ID:", userId)
   const sessionId = generateSessionId()
   const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days
 
-  await sql`
-    INSERT INTO sessions (id, user_id, expires_at)
-    VALUES (${sessionId}, ${userId}, ${expiresAt.toISOString()})
-  `
+  console.log("Session ID:", sessionId)
+  console.log("Expires at:", expiresAt)
 
-  const cookieStore = await cookies()
-  cookieStore.set("session", sessionId, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    expires: expiresAt,
-  })
+  try {
+    await sql`
+      INSERT INTO sessions (id, user_id, expires_at)
+      VALUES (${sessionId}, ${userId}, ${expiresAt.toISOString()})
+    `
+    console.log("✅ Session inserted into database")
 
-  return sessionId
+    const cookieStore = await cookies()
+    cookieStore.set("session", sessionId, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      expires: expiresAt,
+    })
+    console.log("✅ Session cookie set")
+
+    return sessionId
+  } catch (error) {
+    console.error("❌ Error creating session:", error)
+    throw error
+  }
 }
 
 export async function getSession(): Promise<{ user: User } | null> {
@@ -42,8 +74,11 @@ export async function getSession(): Promise<{ user: User } | null> {
     const sessionId = cookieStore.get("session")?.value
 
     if (!sessionId) {
+      console.log("🔍 No session cookie found")
       return null
     }
+
+    console.log("🔍 Looking up session:", sessionId)
 
     const result = await sql`
       SELECT u.*, s.expires_at
@@ -53,13 +88,15 @@ export async function getSession(): Promise<{ user: User } | null> {
     `
 
     if (result.length === 0) {
+      console.log("❌ No valid session found")
       return null
     }
 
     const user = result[0] as User & { expires_at: string }
+    console.log("✅ Session found for user:", user.email)
     return { user }
   } catch (error) {
-    console.error("Session error:", error)
+    console.error("❌ Session error:", error)
     return null
   }
 }
@@ -70,9 +107,11 @@ export async function deleteSession(): Promise<void> {
 
   if (sessionId) {
     await sql`DELETE FROM sessions WHERE id = ${sessionId}`
+    console.log("✅ Session deleted from database")
   }
 
   cookieStore.delete("session")
+  console.log("✅ Session cookie deleted")
 }
 
 export function hasPermission(userRole: UserRole, requiredRole: UserRole): boolean {
