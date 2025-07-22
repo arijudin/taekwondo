@@ -11,7 +11,7 @@ import { AlertCircle } from "lucide-react"
 import { useActionState } from "react"
 
 export default function LoginPage() {
-  const [state, action, isPending] = useActionState(loginUser, null)
+  const [state, formAction, isPending] = useActionState(loginUser, undefined)
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -28,7 +28,7 @@ export default function LoginPage() {
             </Alert>
           )}
 
-          <form action={action} className="space-y-4">
+          <form action={formAction} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input

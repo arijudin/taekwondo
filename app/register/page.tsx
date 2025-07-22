@@ -9,10 +9,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { registerUser } from "@/app/actions/auth"
 import Link from "next/link"
 import { AlertCircle } from "lucide-react"
-import { useActionState } from "react"
+import { useActionState, useState } from "react"
 
 export default function RegisterPage() {
-  const [state, action, isPending] = useActionState(registerUser, null)
+  const [state, formAction, isPending] = useActionState(registerUser, undefined)
+  const [selectedRole, setSelectedRole] = useState("")
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -29,7 +30,7 @@ export default function RegisterPage() {
             </Alert>
           )}
 
-          <form action={action} className="space-y-4">
+          <form action={formAction} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="firstName">First Name</Label>
@@ -64,7 +65,7 @@ export default function RegisterPage() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="role">Role</Label>
-              <Select name="role" required disabled={isPending}>
+              <Select name="role" required disabled={isPending} value={selectedRole} onValueChange={setSelectedRole}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select your role" />
                 </SelectTrigger>
@@ -75,6 +76,7 @@ export default function RegisterPage() {
                   <SelectItem value="super_admin">Super Admin</SelectItem>
                 </SelectContent>
               </Select>
+              <input type="hidden" name="role" value={selectedRole} />
             </div>
             <Button type="submit" className="w-full" disabled={isPending}>
               {isPending ? "Creating account..." : "Create Account"}

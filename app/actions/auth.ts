@@ -4,13 +4,14 @@ import { redirect } from "next/navigation"
 import { sql } from "@/lib/db"
 import { hashPassword, verifyPassword, createSession, deleteSession } from "@/lib/auth"
 
-export async function registerUser(formData: FormData) {
+export async function registerUser(prevState: any, formData: FormData) {
   const email = formData.get("email") as string
   const password = formData.get("password") as string
   const firstName = formData.get("firstName") as string
   const lastName = formData.get("lastName") as string
   const role = formData.get("role") as string
 
+  // Validation
   if (!email || !password || !firstName || !lastName || !role) {
     return { error: "All fields are required" }
   }
@@ -58,7 +59,7 @@ export async function registerUser(formData: FormData) {
   }
 }
 
-export async function loginUser(formData: FormData) {
+export async function loginUser(prevState: any, formData: FormData) {
   const email = formData.get("email") as string
   const password = formData.get("password") as string
 
