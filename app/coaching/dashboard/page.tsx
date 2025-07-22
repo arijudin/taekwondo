@@ -1,18 +1,13 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { getSession } from "@/lib/auth"
+import { requireRole } from "@/lib/auth"
 import { sql } from "@/lib/db"
-import { redirect } from "next/navigation"
 import { Users, Calendar, Trophy, Target, Plus, BookOpen, Star } from "lucide-react"
 import { Suspense } from "react"
 
 async function CoachingDashboardContent() {
-  const session = await getSession()
-
-  if (!session || session.user.role !== "coaching_staff") {
-    redirect("/dashboard")
-  }
+  const session = await requireRole("coaching_staff")
 
   // Get coaching-related statistics
   const coachingStats = await sql`

@@ -1,18 +1,13 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { getSession } from "@/lib/auth"
+import { requireRole } from "@/lib/auth"
 import { sql } from "@/lib/db"
-import { redirect } from "next/navigation"
 import { Users, UserCheck, UserX, UserPlus, Settings, Activity, BarChart3 } from "lucide-react"
 import { Suspense } from "react"
 
 async function AdminDashboardContent() {
-  const session = await getSession()
-
-  if (!session || !["super_admin", "admin"].includes(session.user.role)) {
-    redirect("/dashboard")
-  }
+  const session = await requireRole("admin")
 
   // Get admin-relevant statistics
   const adminStats = await sql`

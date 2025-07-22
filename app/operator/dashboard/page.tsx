@@ -1,9 +1,8 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { getSession } from "@/lib/auth"
+import { requireRole } from "@/lib/auth"
 import { sql } from "@/lib/db"
-import { redirect } from "next/navigation"
 import {
   Settings,
   Activity,
@@ -18,11 +17,7 @@ import {
 import { Suspense } from "react"
 
 async function OperatorDashboardContent() {
-  const session = await getSession()
-
-  if (!session || session.user.role !== "operator") {
-    redirect("/dashboard")
-  }
+  const session = await requireRole("operator")
 
   // Get operational statistics
   const operationalStats = await sql`

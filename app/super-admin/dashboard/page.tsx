@@ -1,18 +1,13 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { getSession } from "@/lib/auth"
+import { requireRole } from "@/lib/auth"
 import { sql } from "@/lib/db"
-import { redirect } from "next/navigation"
 import { Shield, Database, Settings, Activity, Users, UserPlus, AlertTriangle, TrendingUp } from "lucide-react"
 import { Suspense } from "react"
 
 async function SuperAdminDashboardContent() {
-  const session = await getSession()
-
-  if (!session || session.user.role !== "super_admin") {
-    redirect("/dashboard")
-  }
+  const session = await requireRole("super_admin")
 
   // Get system statistics
   const systemStats = await sql`

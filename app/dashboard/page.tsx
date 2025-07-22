@@ -1,16 +1,10 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { getSession } from "@/lib/auth"
-import { redirect } from "next/navigation"
+import { requireAuth } from "@/lib/auth"
 import { Shield, Users, Settings, Activity } from "lucide-react"
 import { Suspense } from "react"
 
 async function DashboardContent() {
-  const session = await getSession()
-
-  if (!session) {
-    redirect("/login")
-  }
-
+  const session = await requireAuth()
   const { user } = session
 
   const getRoleDescription = (role: string) => {

@@ -16,7 +16,17 @@ export async function registerUser(formData: FormData) {
   }
 
   if (password.length < 6) {
-    return { error: "Password must be at least 6 characters" }
+    return { error: "Password must be at least 6 characters long" }
+  }
+
+  if (!email.includes("@")) {
+    return { error: "Please enter a valid email address" }
+  }
+
+  // Check if we're using stub database
+  if (!process.env.DATABASE_URL) {
+    console.log("[STUB] Registration attempt:", { email, firstName, lastName, role })
+    return { error: "Database not connected. Please contact administrator." }
   }
 
   try {
@@ -26,7 +36,7 @@ export async function registerUser(formData: FormData) {
     `
 
     if (existingUser.length > 0) {
-      return { error: "User with this email already exists" }
+      return { error: "An account with this email address already exists" }
     }
 
     // Hash password and create user
@@ -44,7 +54,7 @@ export async function registerUser(formData: FormData) {
     redirect("/dashboard")
   } catch (error) {
     console.error("Registration error:", error)
-    return { error: "Failed to create account" }
+    return { error: "Failed to create account. Please try again later." }
   }
 }
 
@@ -54,6 +64,16 @@ export async function loginUser(formData: FormData) {
 
   if (!email || !password) {
     return { error: "Email and password are required" }
+  }
+
+  if (!email.includes("@")) {
+    return { error: "Please enter a valid email address" }
+  }
+
+  // Check if we're using stub database
+  if (!process.env.DATABASE_URL) {
+    console.log("[STUB] Login attempt:", { email })
+    return { error: "Database not connected. Please contact administrator." }
   }
 
   try {
@@ -69,7 +89,7 @@ export async function loginUser(formData: FormData) {
     const user = result[0]
 
     if (!user.is_active) {
-      return { error: "Account is deactivated" }
+      return { error: "Your account has been deactivated. Please contact administrator." }
     }
 
     const isValidPassword = await verifyPassword(password, user.password_hash)
@@ -82,7 +102,7 @@ export async function loginUser(formData: FormData) {
     redirect("/dashboard")
   } catch (error) {
     console.error("Login error:", error)
-    return { error: "Failed to login" }
+    return { error: "Login failed. Please try again later." }
   }
 }
 

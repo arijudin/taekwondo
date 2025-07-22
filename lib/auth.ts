@@ -2,6 +2,7 @@ import { cookies } from "next/headers"
 import { sql, type User, type UserRole } from "./db"
 import bcrypt from "bcryptjs"
 import { randomBytes } from "crypto"
+import { redirect } from "next/navigation"
 
 export async function hashPassword(password: string): Promise<string> {
   return bcrypt.hash(password, 10)
@@ -83,4 +84,20 @@ export function hasPermission(userRole: UserRole, requiredRole: UserRole): boole
   }
 
   return roleHierarchy[userRole] >= roleHierarchy[requiredRole]
+}
+
+export async function requireAuth() {
+  const session = await getSession()
+  if (!session) {
+    redirect("/login")
+  }
+  return session
+}
+
+export async function requireRole(requiredRole: UserRole) {
+  const session = await requireAuth()
+  if (!hasPermission(session.user.role, requiredRole)) {
+    redirect("/unauthorized")
+  }
+  return session
 }
