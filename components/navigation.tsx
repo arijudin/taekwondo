@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button"
 import { logoutUser } from "@/app/actions/auth"
 import { getSession } from "@/lib/auth"
 import Link from "next/link"
-import { User, LogOut, Shield, Users } from "lucide-react"
+import { User, LogOut, Shield, Users, Settings, Activity } from "lucide-react"
 import { Suspense } from "react"
 
 async function NavigationContent() {
@@ -13,6 +13,36 @@ async function NavigationContent() {
   }
 
   const { user } = session
+
+  const getRoleDashboardLink = (role: string) => {
+    switch (role) {
+      case "super_admin":
+        return "/super-admin/dashboard"
+      case "admin":
+        return "/admin/dashboard"
+      case "operator":
+        return "/operator/dashboard"
+      case "coaching_staff":
+        return "/coaching/dashboard"
+      default:
+        return "/dashboard"
+    }
+  }
+
+  const getRoleIcon = (role: string) => {
+    switch (role) {
+      case "super_admin":
+        return <Shield className="h-4 w-4" />
+      case "admin":
+        return <Users className="h-4 w-4" />
+      case "operator":
+        return <Settings className="h-4 w-4" />
+      case "coaching_staff":
+        return <Activity className="h-4 w-4" />
+      default:
+        return <User className="h-4 w-4" />
+    }
+  }
 
   return (
     <nav className="bg-white shadow-sm border-b">
@@ -28,7 +58,18 @@ async function NavigationContent() {
                 href="/dashboard"
                 className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
               >
-                Dashboard
+                Overview
+              </Link>
+
+              <Link
+                href={getRoleDashboardLink(user.role)}
+                className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium flex items-center gap-1"
+              >
+                {getRoleIcon(user.role)}
+                {user.role === "super_admin" && "Super Admin"}
+                {user.role === "admin" && "Admin"}
+                {user.role === "operator" && "Operations"}
+                {user.role === "coaching_staff" && "Coaching"}
               </Link>
 
               {(user.role === "super_admin" || user.role === "admin") && (
@@ -37,7 +78,7 @@ async function NavigationContent() {
                   className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium flex items-center gap-1"
                 >
                   <Users className="h-4 w-4" />
-                  Admin
+                  User Management
                 </Link>
               )}
 
@@ -47,7 +88,7 @@ async function NavigationContent() {
                   className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium flex items-center gap-1"
                 >
                   <Shield className="h-4 w-4" />
-                  Super Admin
+                  System Admin
                 </Link>
               )}
             </div>
