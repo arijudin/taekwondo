@@ -1,47 +1,55 @@
-import { Button } from "@/components/ui/button"
-import { logoutUser } from "@/app/actions/auth"
-import { getSession } from "@/lib/auth"
-import Link from "next/link"
-import { User, LogOut, Shield, Users, Settings, Activity, Trophy } from "lucide-react"
+import { Button } from "@/components/ui/button";
+import { logoutUser } from "@/app/actions/auth";
+import { getSession } from "@/lib/auth";
+import Link from "next/link";
+import {
+  User,
+  LogOut,
+  Shield,
+  Users,
+  Settings,
+  Activity,
+  Trophy,
+} from "lucide-react";
 
 export default async function NavigationServer() {
-  const session = await getSession()
+  const session = await getSession();
 
   if (!session) {
-    return null
+    return null;
   }
 
-  const { user } = session
+  const { user } = session;
 
   const getRoleDashboardLink = (role: string) => {
     switch (role) {
       case "super_admin":
-        return "/super-admin/dashboard"
+        return "/super-admin/dashboard";
       case "admin":
-        return "/admin/dashboard"
+        return "/admin/dashboard";
       case "operator":
-        return "/operator/dashboard"
+        return "/operator/dashboard";
       case "coaching_staff":
-        return "/coaching/dashboard"
+        return "/coaching/dashboard";
       default:
-        return "/dashboard"
+        return "/dashboard";
     }
-  }
+  };
 
   const getRoleIcon = (role: string) => {
     switch (role) {
       case "super_admin":
-        return <Shield className="h-4 w-4" />
+        return <Shield className="h-4 w-4" />;
       case "admin":
-        return <Users className="h-4 w-4" />
+        return <Users className="h-4 w-4" />;
       case "operator":
-        return <Settings className="h-4 w-4" />
+        return <Settings className="h-4 w-4" />;
       case "coaching_staff":
-        return <Activity className="h-4 w-4" />
+        return <Activity className="h-4 w-4" />;
       default:
-        return <User className="h-4 w-4" />
+        return <User className="h-4 w-4" />;
     }
-  }
+  };
 
   return (
     <nav className="bg-white shadow-sm border-b">
@@ -64,7 +72,6 @@ export default async function NavigationServer() {
                 href="/tournament"
                 className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium flex items-center gap-1"
               >
-                <Trophy className="h-4 w-4" />
                 Tournament
               </Link>
 
@@ -72,7 +79,6 @@ export default async function NavigationServer() {
                 href={getRoleDashboardLink(user.role)}
                 className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium flex items-center gap-1"
               >
-                {getRoleIcon(user.role)}
                 {user.role === "super_admin" && "Super Admin"}
                 {user.role === "admin" && "Admin"}
                 {user.role === "operator" && "Operations"}
@@ -84,7 +90,6 @@ export default async function NavigationServer() {
                   href="/admin"
                   className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium flex items-center gap-1"
                 >
-                  <Users className="h-4 w-4" />
                   User Management
                 </Link>
               )}
@@ -94,7 +99,6 @@ export default async function NavigationServer() {
                   href="/super-admin"
                   className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium flex items-center gap-1"
                 >
-                  <Shield className="h-4 w-4" />
                   System Admin
                 </Link>
               )}
@@ -103,10 +107,9 @@ export default async function NavigationServer() {
 
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-2">
-              <User className="h-4 w-4 text-gray-500" />
-              <span className="text-sm text-gray-700">
+              {/* <span className="text-sm text-gray-700">
                 {user.first_name} {user.last_name}
-              </span>
+              </span> */}
               <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">
                 {user.role.replace("_", " ")}
               </span>
@@ -122,5 +125,5 @@ export default async function NavigationServer() {
         </div>
       </div>
     </nav>
-  )
+  );
 }
