@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button"
 import { logoutUser } from "@/app/actions/auth"
 import { getSession } from "@/lib/auth"
 import Link from "next/link"
-import { User, LogOut, Shield, Users, Settings, Activity } from "lucide-react"
+import { User, LogOut, Shield, Users, Settings, Activity, Trophy } from "lucide-react"
 import { Suspense } from "react"
 
 async function NavigationContent() {
@@ -50,7 +50,7 @@ async function NavigationContent() {
         <div className="flex justify-between h-16">
           <div className="flex items-center space-x-8">
             <Link href="/dashboard" className="text-xl font-bold text-gray-900">
-              Multi-Auth System
+              Taekwondo Tournament System
             </Link>
 
             <div className="flex space-x-4">
@@ -59,6 +59,14 @@ async function NavigationContent() {
                 className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
               >
                 Overview
+              </Link>
+
+              <Link
+                href="/tournament"
+                className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium flex items-center gap-1"
+              >
+                <Trophy className="h-4 w-4" />
+                Tournament
               </Link>
 
               <Link
