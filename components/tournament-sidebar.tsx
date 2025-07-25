@@ -28,6 +28,7 @@ import {
   UserX,
   PenTool,
   Database,
+  ArrowLeft,
 } from "lucide-react"
 import {
   Sidebar,
@@ -48,15 +49,23 @@ import {
 import { Button } from "@/components/ui/button"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 
-export function TournamentSidebar() {
+interface TournamentSidebarProps {
+  tournamentId: number
+  tournamentName: string
+}
+
+export function TournamentSidebar({ tournamentId, tournamentName }: TournamentSidebarProps) {
   const pathname = usePathname()
   const [searchQuery, setSearchQuery] = React.useState("")
+
+  // Helper function to create tournament-specific links
+  const tournamentLink = (path: string) => `/tournament/${tournamentId}${path}`
 
   return (
     <Sidebar variant="inset" collapsible="icon">
       <SidebarHeader>
         <div className="flex items-center justify-between px-4 py-2">
-          <h2 className="text-lg font-semibold">Taekwondo Tournament</h2>
+          <h2 className="text-lg font-semibold truncate">{tournamentName}</h2>
         </div>
         <div className="px-4 py-2">
           <SidebarInput placeholder="Search..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
@@ -64,6 +73,22 @@ export function TournamentSidebar() {
       </SidebarHeader>
 
       <SidebarContent>
+        {/* Dashboard */}
+        <SidebarGroup>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild tooltip="Dashboard">
+                  <Link href={tournamentLink("")}>
+                    <Trophy className="h-4 w-4" />
+                    <span>Dashboard</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
         {/* Kejuaraan Menu */}
         <SidebarGroup>
           <Collapsible className="group/collapsible">
@@ -81,7 +106,7 @@ export function TournamentSidebar() {
                 <SidebarMenu>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild tooltip="Kelengkapan Kejuaraan">
-                      <Link href="/tournament/setup">
+                      <Link href={tournamentLink("/setup")}>
                         <Settings className="h-4 w-4" />
                         <span>Kelengkapan Kejuaraan</span>
                       </Link>
@@ -89,7 +114,7 @@ export function TournamentSidebar() {
                   </SidebarMenuItem>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild tooltip="Penyelengara">
-                      <Link href="/tournament/organizer">
+                      <Link href={tournamentLink("/organizer")}>
                         <Users className="h-4 w-4" />
                         <span>Penyelengara</span>
                       </Link>
@@ -97,7 +122,7 @@ export function TournamentSidebar() {
                   </SidebarMenuItem>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild tooltip="Penanggung Jawab">
-                      <Link href="/tournament/responsible">
+                      <Link href={tournamentLink("/responsible")}>
                         <User className="h-4 w-4" />
                         <span>Penanggung Jawab</span>
                       </Link>
@@ -105,7 +130,7 @@ export function TournamentSidebar() {
                   </SidebarMenuItem>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild tooltip="Ketua Panitia">
-                      <Link href="/tournament/chairman">
+                      <Link href={tournamentLink("/chairman")}>
                         <UserCheck className="h-4 w-4" />
                         <span>Ketua Panitia</span>
                       </Link>
@@ -113,7 +138,7 @@ export function TournamentSidebar() {
                   </SidebarMenuItem>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild tooltip="Wasit">
-                      <Link href="/tournament/referee">
+                      <Link href={tournamentLink("/referee")}>
                         <Shield className="h-4 w-4" />
                         <span>Wasit</span>
                       </Link>
@@ -121,7 +146,7 @@ export function TournamentSidebar() {
                   </SidebarMenuItem>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild tooltip="Bendahara">
-                      <Link href="/tournament/treasurer">
+                      <Link href={tournamentLink("/treasurer")}>
                         <DollarSign className="h-4 w-4" />
                         <span>Bendahara</span>
                       </Link>
@@ -129,7 +154,7 @@ export function TournamentSidebar() {
                   </SidebarMenuItem>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild tooltip="Admin Kejuaraan">
-                      <Link href="/tournament/admin">
+                      <Link href={tournamentLink("/admin")}>
                         <Database className="h-4 w-4" />
                         <span>Admin Kejuaraan</span>
                       </Link>
@@ -137,7 +162,7 @@ export function TournamentSidebar() {
                   </SidebarMenuItem>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild tooltip="Biaya">
-                      <Link href="/tournament/fees">
+                      <Link href={tournamentLink("/fees")}>
                         <DollarSign className="h-4 w-4" />
                         <span>Biaya</span>
                       </Link>
@@ -145,7 +170,7 @@ export function TournamentSidebar() {
                   </SidebarMenuItem>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild tooltip="Acara">
-                      <Link href="/tournament/events">
+                      <Link href={tournamentLink("/events")}>
                         <Calendar className="h-4 w-4" />
                         <span>Acara</span>
                       </Link>
@@ -153,7 +178,7 @@ export function TournamentSidebar() {
                   </SidebarMenuItem>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild tooltip="Antrian">
-                      <Link href="/tournament/queue">
+                      <Link href={tournamentLink("/queue")}>
                         <Clock className="h-4 w-4" />
                         <span>Antrian</span>
                       </Link>
@@ -161,7 +186,7 @@ export function TournamentSidebar() {
                   </SidebarMenuItem>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild tooltip="Kelas Umur">
-                      <Link href="/tournament/age-classes">
+                      <Link href={tournamentLink("/age-classes")}>
                         <Layers className="h-4 w-4" />
                         <span>Kelas Umur</span>
                       </Link>
@@ -169,7 +194,7 @@ export function TournamentSidebar() {
                   </SidebarMenuItem>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild tooltip="Kelas Kejuaraan">
-                      <Link href="/tournament/tournament-classes">
+                      <Link href={tournamentLink("/tournament-classes")}>
                         <Target className="h-4 w-4" />
                         <span>Kelas Kejuaraan</span>
                       </Link>
@@ -177,7 +202,7 @@ export function TournamentSidebar() {
                   </SidebarMenuItem>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild tooltip="Pengaturan Pertandingan">
-                      <Link href="/tournament/match-settings">
+                      <Link href={tournamentLink("/match-settings")}>
                         <Settings className="h-4 w-4" />
                         <span>Pengaturan Pertandingan</span>
                       </Link>
@@ -185,7 +210,7 @@ export function TournamentSidebar() {
                   </SidebarMenuItem>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild tooltip="Antrian Pertandingan">
-                      <Link href="/tournament/match-queue">
+                      <Link href={tournamentLink("/match-queue")}>
                         <Clock className="h-4 w-4" />
                         <span>Antrian Pertandingan</span>
                       </Link>
@@ -226,22 +251,24 @@ export function TournamentSidebar() {
                         <SidebarMenuSub>
                           <SidebarMenuSubItem>
                             <SidebarMenuSubButton asChild>
-                              <Link href="/tournament/teams/all">Semua Team</Link>
+                              <Link href={tournamentLink("/teams/all")}>Semua Team</Link>
                             </SidebarMenuSubButton>
                           </SidebarMenuSubItem>
                           <SidebarMenuSubItem>
                             <SidebarMenuSubButton asChild>
-                              <Link href="/tournament/teams/recap">Rekap Team</Link>
+                              <Link href={tournamentLink("/teams/recap")}>Rekap Team</Link>
                             </SidebarMenuSubButton>
                           </SidebarMenuSubItem>
                           <SidebarMenuSubItem>
                             <SidebarMenuSubButton asChild>
-                              <Link href="/tournament/teams/registration-status">Status Registrasi Kelas Team</Link>
+                              <Link href={tournamentLink("/teams/registration-status")}>
+                                Status Registrasi Kelas Team
+                              </Link>
                             </SidebarMenuSubButton>
                           </SidebarMenuSubItem>
                           <SidebarMenuSubItem>
                             <SidebarMenuSubButton asChild>
-                              <Link href="/tournament/teams/managers">Manager</Link>
+                              <Link href={tournamentLink("/teams/managers")}>Manager</Link>
                             </SidebarMenuSubButton>
                           </SidebarMenuSubItem>
                         </SidebarMenuSub>
@@ -263,44 +290,44 @@ export function TournamentSidebar() {
                         <SidebarMenuSub>
                           <SidebarMenuSubItem>
                             <SidebarMenuSubButton asChild>
-                              <Link href="/tournament/participants/all">Semua Peserta</Link>
+                              <Link href={tournamentLink("/participants/all")}>Semua Peserta</Link>
                             </SidebarMenuSubButton>
                           </SidebarMenuSubItem>
                           <SidebarMenuSubItem>
                             <SidebarMenuSubButton asChild>
-                              <Link href="/tournament/participants/recap">Rekap Peserta</Link>
+                              <Link href={tournamentLink("/participants/recap")}>Rekap Peserta</Link>
                             </SidebarMenuSubButton>
                           </SidebarMenuSubItem>
                           <SidebarMenuSubItem>
                             <SidebarMenuSubButton asChild>
-                              <Link href="/tournament/participants/individual">Rekap Peserta Individu</Link>
+                              <Link href={tournamentLink("/participants/individual")}>Rekap Peserta Individu</Link>
                             </SidebarMenuSubButton>
                           </SidebarMenuSubItem>
                           <SidebarMenuSubItem>
                             <SidebarMenuSubButton asChild>
-                              <Link href="/tournament/participants/pair">Rekap Peserta Pair</Link>
+                              <Link href={tournamentLink("/participants/pair")}>Rekap Peserta Pair</Link>
                             </SidebarMenuSubButton>
                           </SidebarMenuSubItem>
                           <SidebarMenuSubItem>
                             <SidebarMenuSubButton asChild>
-                              <Link href="/tournament/participants/team">Rekap Peserta Beregu</Link>
+                              <Link href={tournamentLink("/participants/team")}>Rekap Peserta Beregu</Link>
                             </SidebarMenuSubButton>
                           </SidebarMenuSubItem>
                           <SidebarMenuSubItem>
                             <SidebarMenuSubButton asChild>
-                              <Link href="/tournament/participants/freestyle-individual">
+                              <Link href={tournamentLink("/participants/freestyle-individual")}>
                                 Rekap Free Style Individu
                               </Link>
                             </SidebarMenuSubButton>
                           </SidebarMenuSubItem>
                           <SidebarMenuSubItem>
                             <SidebarMenuSubButton asChild>
-                              <Link href="/tournament/participants/freestyle-pair">Rekap Free Style Pair</Link>
+                              <Link href={tournamentLink("/participants/freestyle-pair")}>Rekap Free Style Pair</Link>
                             </SidebarMenuSubButton>
                           </SidebarMenuSubItem>
                           <SidebarMenuSubItem>
                             <SidebarMenuSubButton asChild>
-                              <Link href="/tournament/participants/freestyle-team">Rekap Free Style Beregu</Link>
+                              <Link href={tournamentLink("/participants/freestyle-team")}>Rekap Free Style Beregu</Link>
                             </SidebarMenuSubButton>
                           </SidebarMenuSubItem>
                         </SidebarMenuSub>
@@ -330,7 +357,7 @@ export function TournamentSidebar() {
                 <SidebarMenu>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild tooltip="Peserta Individu">
-                      <Link href="/tournament/bpjs/individual">
+                      <Link href={tournamentLink("/bpjs/individual")}>
                         <User className="h-4 w-4" />
                         <span>Peserta Individu</span>
                       </Link>
@@ -338,7 +365,7 @@ export function TournamentSidebar() {
                   </SidebarMenuItem>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild tooltip="Peserta Pair">
-                      <Link href="/tournament/bpjs/pair">
+                      <Link href={tournamentLink("/bpjs/pair")}>
                         <Users className="h-4 w-4" />
                         <span>Peserta Pair</span>
                       </Link>
@@ -346,7 +373,7 @@ export function TournamentSidebar() {
                   </SidebarMenuItem>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild tooltip="Peserta Beregu">
-                      <Link href="/tournament/bpjs/team">
+                      <Link href={tournamentLink("/bpjs/team")}>
                         <Users className="h-4 w-4" />
                         <span>Peserta Beregu</span>
                       </Link>
@@ -354,7 +381,7 @@ export function TournamentSidebar() {
                   </SidebarMenuItem>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild tooltip="Peserta Individu Freestyle">
-                      <Link href="/tournament/bpjs/freestyle-individual">
+                      <Link href={tournamentLink("/bpjs/freestyle-individual")}>
                         <User className="h-4 w-4" />
                         <span>Peserta Individu Freestyle</span>
                       </Link>
@@ -362,7 +389,7 @@ export function TournamentSidebar() {
                   </SidebarMenuItem>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild tooltip="Peserta Pair Freestyle">
-                      <Link href="/tournament/bpjs/freestyle-pair">
+                      <Link href={tournamentLink("/bpjs/freestyle-pair")}>
                         <Users className="h-4 w-4" />
                         <span>Peserta Pair Freestyle</span>
                       </Link>
@@ -370,7 +397,7 @@ export function TournamentSidebar() {
                   </SidebarMenuItem>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild tooltip="Peserta Beregu Freestyle">
-                      <Link href="/tournament/bpjs/freestyle-team">
+                      <Link href={tournamentLink("/bpjs/freestyle-team")}>
                         <Users className="h-4 w-4" />
                         <span>Peserta Beregu Freestyle</span>
                       </Link>
@@ -399,7 +426,7 @@ export function TournamentSidebar() {
                 <SidebarMenu>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild tooltip="Rekap Kelas Kejuaraan">
-                      <Link href="/tournament/classes/recap">
+                      <Link href={tournamentLink("/classes/recap")}>
                         <FileText className="h-4 w-4" />
                         <span>Rekap Kelas Kejuaraan</span>
                       </Link>
@@ -407,7 +434,7 @@ export function TournamentSidebar() {
                   </SidebarMenuItem>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild tooltip="Rekap Kelas Kejuaraan Pair">
-                      <Link href="/tournament/classes/pair-recap">
+                      <Link href={tournamentLink("/classes/pair-recap")}>
                         <FileText className="h-4 w-4" />
                         <span>Rekap Kelas Kejuaraan Pair</span>
                       </Link>
@@ -415,7 +442,7 @@ export function TournamentSidebar() {
                   </SidebarMenuItem>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild tooltip="Rekap Kelas Kejuaraan Beregu">
-                      <Link href="/tournament/classes/team-recap">
+                      <Link href={tournamentLink("/classes/team-recap")}>
                         <FileText className="h-4 w-4" />
                         <span>Rekap Kelas Kejuaraan Beregu</span>
                       </Link>
@@ -423,7 +450,7 @@ export function TournamentSidebar() {
                   </SidebarMenuItem>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild tooltip="Rekap Kelas Kejuaraan Freestyle">
-                      <Link href="/tournament/classes/freestyle-recap">
+                      <Link href={tournamentLink("/classes/freestyle-recap")}>
                         <FileText className="h-4 w-4" />
                         <span>Rekap Kelas Kejuaraan Freestyle</span>
                       </Link>
@@ -431,7 +458,7 @@ export function TournamentSidebar() {
                   </SidebarMenuItem>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild tooltip="Rekap Freestyle Pair">
-                      <Link href="/tournament/classes/freestyle-pair-recap">
+                      <Link href={tournamentLink("/classes/freestyle-pair-recap")}>
                         <FileText className="h-4 w-4" />
                         <span>Rekap Freestyle Pair</span>
                       </Link>
@@ -439,7 +466,7 @@ export function TournamentSidebar() {
                   </SidebarMenuItem>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild tooltip="Rekap Freestyle Beregu">
-                      <Link href="/tournament/classes/freestyle-team-recap">
+                      <Link href={tournamentLink("/classes/freestyle-team-recap")}>
                         <FileText className="h-4 w-4" />
                         <span>Rekap Freestyle Beregu</span>
                       </Link>
@@ -468,7 +495,7 @@ export function TournamentSidebar() {
                 <SidebarMenu>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild tooltip="Official">
-                      <Link href="/tournament/cocard/official">
+                      <Link href={tournamentLink("/cocard/official")}>
                         <Shield className="h-4 w-4" />
                         <span>Official</span>
                       </Link>
@@ -476,7 +503,7 @@ export function TournamentSidebar() {
                   </SidebarMenuItem>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild tooltip="Manager">
-                      <Link href="/tournament/cocard/manager">
+                      <Link href={tournamentLink("/cocard/manager")}>
                         <Briefcase className="h-4 w-4" />
                         <span>Manager</span>
                       </Link>
@@ -484,7 +511,7 @@ export function TournamentSidebar() {
                   </SidebarMenuItem>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild tooltip="Coach">
-                      <Link href="/tournament/cocard/coach">
+                      <Link href={tournamentLink("/cocard/coach")}>
                         <UserCheck className="h-4 w-4" />
                         <span>Coach</span>
                       </Link>
@@ -492,7 +519,7 @@ export function TournamentSidebar() {
                   </SidebarMenuItem>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild tooltip="Atlet">
-                      <Link href="/tournament/cocard/athlete">
+                      <Link href={tournamentLink("/cocard/athlete")}>
                         <User className="h-4 w-4" />
                         <span>Atlet</span>
                       </Link>
@@ -521,7 +548,7 @@ export function TournamentSidebar() {
                 <SidebarMenu>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild tooltip="Hari">
-                      <Link href="/tournament/brackets/day">
+                      <Link href={tournamentLink("/brackets/day")}>
                         <Calendar className="h-4 w-4" />
                         <span>Hari</span>
                       </Link>
@@ -529,7 +556,7 @@ export function TournamentSidebar() {
                   </SidebarMenuItem>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild tooltip="Lapangan">
-                      <Link href="/tournament/brackets/court">
+                      <Link href={tournamentLink("/brackets/court")}>
                         <Map className="h-4 w-4" />
                         <span>Lapangan</span>
                       </Link>
@@ -537,7 +564,7 @@ export function TournamentSidebar() {
                   </SidebarMenuItem>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild tooltip="Jumlah Kelas Atlet">
-                      <Link href="/tournament/brackets/athlete-classes">
+                      <Link href={tournamentLink("/brackets/athlete-classes")}>
                         <Layers className="h-4 w-4" />
                         <span>Jumlah Kelas Atlet</span>
                       </Link>
@@ -545,7 +572,7 @@ export function TournamentSidebar() {
                   </SidebarMenuItem>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild tooltip="Pindah Kelas Atlet">
-                      <Link href="/tournament/brackets/change-class">
+                      <Link href={tournamentLink("/brackets/change-class")}>
                         <UserPlus className="h-4 w-4" />
                         <span>Pindah Kelas Atlet</span>
                       </Link>
@@ -553,7 +580,7 @@ export function TournamentSidebar() {
                   </SidebarMenuItem>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild tooltip="Atlet Tanpa Lawan">
-                      <Link href="/tournament/brackets/no-opponent">
+                      <Link href={tournamentLink("/brackets/no-opponent")}>
                         <UserX className="h-4 w-4" />
                         <span>Atlet Tanpa Lawan</span>
                       </Link>
@@ -561,7 +588,7 @@ export function TournamentSidebar() {
                   </SidebarMenuItem>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild tooltip="Kelola Bagan">
-                      <Link href="/tournament/brackets/manage">
+                      <Link href={tournamentLink("/brackets/manage")}>
                         <Settings className="h-4 w-4" />
                         <span>Kelola Bagan</span>
                       </Link>
@@ -569,7 +596,7 @@ export function TournamentSidebar() {
                   </SidebarMenuItem>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild tooltip="Atlet Bahan">
-                      <Link href="/tournament/brackets/athlete-materials">
+                      <Link href={tournamentLink("/brackets/athlete-materials")}>
                         <User className="h-4 w-4" />
                         <span>Atlet Bahan</span>
                       </Link>
@@ -598,7 +625,7 @@ export function TournamentSidebar() {
                 <SidebarMenu>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild tooltip="Pengaturan Piagam">
-                      <Link href="/tournament/results/certificate-settings">
+                      <Link href={tournamentLink("/results/certificate-settings")}>
                         <FileText className="h-4 w-4" />
                         <span>Pengaturan Piagam</span>
                       </Link>
@@ -606,7 +633,7 @@ export function TournamentSidebar() {
                   </SidebarMenuItem>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild tooltip="Hasil Pertandingan Kelas">
-                      <Link href="/tournament/results/class-results">
+                      <Link href={tournamentLink("/results/class-results")}>
                         <BarChart3 className="h-4 w-4" />
                         <span>Hasil Pertandingan Kelas</span>
                       </Link>
@@ -614,7 +641,7 @@ export function TournamentSidebar() {
                   </SidebarMenuItem>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild tooltip="Hasil Pertandingan Tim">
-                      <Link href="/tournament/results/team-results">
+                      <Link href={tournamentLink("/results/team-results")}>
                         <BarChart3 className="h-4 w-4" />
                         <span>Hasil Pertandingan Tim</span>
                       </Link>
@@ -622,7 +649,7 @@ export function TournamentSidebar() {
                   </SidebarMenuItem>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild tooltip="Daftar Atlet Juara">
-                      <Link href="/tournament/results/champion-athletes">
+                      <Link href={tournamentLink("/results/champion-athletes")}>
                         <Medal className="h-4 w-4" />
                         <span>Daftar Atlet Juara</span>
                       </Link>
@@ -651,7 +678,7 @@ export function TournamentSidebar() {
                 <SidebarMenu>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild tooltip="Manajemen Operator">
-                      <Link href="/tournament/operators/manage">
+                      <Link href={tournamentLink("/operators/manage")}>
                         <Users className="h-4 w-4" />
                         <span>Manajemen Operator</span>
                       </Link>
@@ -659,7 +686,7 @@ export function TournamentSidebar() {
                   </SidebarMenuItem>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild tooltip="Penetuan Juara Partai">
-                      <Link href="/tournament/operators/champions">
+                      <Link href={tournamentLink("/operators/champions")}>
                         <Trophy className="h-4 w-4" />
                         <span>Penetuan Juara Partai</span>
                       </Link>
@@ -667,7 +694,7 @@ export function TournamentSidebar() {
                   </SidebarMenuItem>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild tooltip="Penetuan Juara Partai (Manual)">
-                      <Link href="/tournament/operators/champions-manual">
+                      <Link href={tournamentLink("/operators/champions-manual")}>
                         <PenTool className="h-4 w-4" />
                         <span>Penetuan Juara Partai (Manual)</span>
                       </Link>
@@ -681,11 +708,17 @@ export function TournamentSidebar() {
       </SidebarContent>
 
       <SidebarFooter>
-        <div className="px-4 py-2">
+        <div className="px-4 py-2 space-y-2">
+          <Button variant="outline" className="w-full bg-transparent" asChild>
+            <Link href="/tournament">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              <span>Back to Tournaments</span>
+            </Link>
+          </Button>
           <Button variant="outline" className="w-full bg-transparent" asChild>
             <Link href="/dashboard">
               <User className="mr-2 h-4 w-4" />
-              <span>Back to Dashboard</span>
+              <span>Main Dashboard</span>
             </Link>
           </Button>
         </div>
