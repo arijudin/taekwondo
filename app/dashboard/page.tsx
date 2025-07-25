@@ -1,7 +1,9 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
 import { requireAuth } from "@/lib/auth"
-import { Shield, Users, Settings, Activity } from "lucide-react"
+import { Shield, Users, Settings, Activity, Trophy } from "lucide-react"
 import { Suspense } from "react"
+import Link from "next/link"
 
 async function DashboardContent() {
   const session = await requireAuth()
@@ -71,11 +73,18 @@ async function DashboardContent() {
 
         <Card>
           <CardHeader className="flex flex-row items-center space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Member Since</CardTitle>
+            <CardTitle className="text-sm font-medium">Tournament System</CardTitle>
+            <Trophy className="h-4 w-4 text-amber-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{new Date(user.created_at).toLocaleDateString()}</div>
-            <p className="text-xs text-muted-foreground mt-2">Account creation date</p>
+            <div className="text-2xl font-bold text-amber-600">Available</div>
+            <p className="text-xs text-muted-foreground mt-2">Access the tournament management system</p>
+            <Button asChild className="mt-4 w-full">
+              <Link href="/tournament">
+                <Trophy className="mr-2 h-4 w-4" />
+                Open Tournament System
+              </Link>
+            </Button>
           </CardContent>
         </Card>
       </div>
@@ -115,6 +124,17 @@ async function DashboardContent() {
                   <p className="text-sm text-gray-600 mt-1">Athlete management and coaching tools</p>
                 </div>
               )}
+
+              <div className="p-4 border rounded-lg border-amber-200 bg-amber-50">
+                <h3 className="font-semibold text-amber-600">Tournament Management</h3>
+                <p className="text-sm text-gray-600 mt-1">Comprehensive Taekwondo tournament system</p>
+                <Button asChild variant="outline" className="mt-2 bg-transparent">
+                  <Link href="/tournament">
+                    <Trophy className="mr-2 h-4 w-4" />
+                    Access Tournament System
+                  </Link>
+                </Button>
+              </div>
             </div>
           </CardContent>
         </Card>
