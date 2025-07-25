@@ -3,6 +3,7 @@ import { sql, type User, type UserRole } from "./db"
 import bcrypt from "bcryptjs"
 import { randomBytes } from "crypto"
 import { redirect } from "next/navigation"
+import { cache } from "react"
 
 export async function hashPassword(password: string): Promise<string> {
   console.log("🔐 Hashing password with bcrypt...")
@@ -68,7 +69,7 @@ export async function createSession(userId: number): Promise<string> {
   }
 }
 
-export async function getSession(): Promise<{ user: User } | null> {
+export const getSession = cache(async (): Promise<{ user: User } | null> => {
   try {
     const cookieStore = await cookies()
     const sessionId = cookieStore.get("session")?.value
@@ -99,7 +100,7 @@ export async function getSession(): Promise<{ user: User } | null> {
     console.error("❌ Session error:", error)
     return null
   }
-}
+})
 
 export async function deleteSession(): Promise<void> {
   const cookieStore = await cookies()

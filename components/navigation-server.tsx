@@ -3,9 +3,8 @@ import { logoutUser } from "@/app/actions/auth"
 import { getSession } from "@/lib/auth"
 import Link from "next/link"
 import { User, LogOut, Shield, Users, Settings, Activity, Trophy } from "lucide-react"
-import { Suspense } from "react"
 
-async function NavigationContent() {
+export default async function NavigationServer() {
   const session = await getSession()
 
   if (!session) {
@@ -123,13 +122,5 @@ async function NavigationContent() {
         </div>
       </div>
     </nav>
-  )
-}
-
-export default function Navigation() {
-  return (
-    <Suspense fallback={<div className="h-16 bg-white border-b" />}>
-      <NavigationContent />
-    </Suspense>
   )
 }
