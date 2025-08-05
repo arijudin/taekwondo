@@ -1,95 +1,70 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { requireAuth } from "@/lib/auth";
-import { sql } from "@/lib/db";
-import { notFound } from "next/navigation";
-import {
-  Trophy,
-  Users,
-  Calendar,
-  Settings,
-  Award,
-  Target,
-  Edit,
-  Trash2,
-  AlertTriangle,
-} from "lucide-react";
-import Link from "next/link";
-import { Suspense } from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
+import { requireAuth } from "@/lib/auth"
+import { sql } from "@/lib/db"
+import { notFound } from "next/navigation"
+import { Trophy, Users, Calendar, Settings, Award, Target, Edit, Trash2, AlertTriangle } from "lucide-react"
+import Link from "next/link"
+import { Suspense } from "react"
 
-async function TournamentDashboardContent({
-  params,
-}: {
-  params: { id: string };
-}) {
-  const session = await requireAuth();
-  const tournamentId = Number.parseInt(params.id);
+async function TournamentDashboardContent({ params }: { params: { id: string } }) {
+  const session = await requireAuth()
+  const tournamentId = Number.parseInt(params.id)
 
   if (isNaN(tournamentId)) {
-    notFound();
+    notFound()
   }
 
   // Get tournament details
   const tournamentResult = await sql`
-    SELECT
+    SELECT 
       id, name, description, start_date, end_date, location, status,
       organizer, chairman, referee_chief, treasurer, admin_tournament, registration_fee,
       created_at, updated_at
-    FROM tournaments
+    FROM tournaments 
     WHERE id = ${tournamentId}
-  `;
+  `
 
   if (tournamentResult.length === 0) {
-    notFound();
+    notFound()
   }
 
-  const tournament = tournamentResult[0];
+  const tournament = tournamentResult[0]
 
   // Get tournament statistics
   const statsResult = await sql`
-    SELECT
+    SELECT 
       (SELECT COUNT(*) FROM participants WHERE tournament_id = ${tournamentId}) as total_participants,
       (SELECT COUNT(*) FROM teams WHERE tournament_id = ${tournamentId}) as total_teams,
       (SELECT COUNT(*) FROM tournament_classes WHERE tournament_id = ${tournamentId}) as total_classes,
       (SELECT COUNT(*) FROM matches WHERE tournament_id = ${tournamentId}) as total_matches,
       (SELECT COUNT(*) FROM matches WHERE tournament_id = ${tournamentId} AND status = 'completed') as completed_matches
-  `;
+  `
 
-  const stats = statsResult[0] || {};
+  const stats = statsResult[0] || {}
 
   // Format dates
-  const startDate = new Date(tournament.start_date).toLocaleDateString();
-  const endDate = new Date(tournament.end_date).toLocaleDateString();
-  const createdAt = new Date(tournament.created_at).toLocaleDateString();
-  const updatedAt = new Date(tournament.updated_at).toLocaleDateString();
+  const startDate = new Date(tournament.start_date).toLocaleDateString()
+  const endDate = new Date(tournament.end_date).toLocaleDateString()
+  const createdAt = new Date(tournament.created_at).toLocaleDateString()
+  const updatedAt = new Date(tournament.updated_at).toLocaleDateString()
 
   // Calculate days until tournament
-  const daysUntil = Math.ceil(
-    (new Date(tournament.start_date).getTime() - new Date().getTime()) /
-      (1000 * 3600 * 24),
-  );
+  const daysUntil = Math.ceil((new Date(tournament.start_date).getTime() - new Date().getTime()) / (1000 * 3600 * 24))
   const tournamentStatus =
     daysUntil > 0
       ? `Starts in ${daysUntil} days`
       : new Date() <= new Date(tournament.end_date)
         ? "Currently ongoing"
-        : "Completed";
+        : "Completed"
 
   return (
-    <div className="p-6 w-full max-w-7xl mx-auto">
+    <div className="p-6">
       <div className="flex justify-between items-start mb-8">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-3xl font-bold text-gray-900">
-              {tournament.name}
-            </h1>
+            <h1 className="text-3xl font-bold text-gray-900">{tournament.name}</h1>
             <Badge
               variant={
                 tournament.status === "ongoing"
@@ -131,9 +106,7 @@ async function TournamentDashboardContent({
             <Users className="h-4 w-4 text-blue-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-blue-600">
-              {stats.total_participants || 0}
-            </div>
+            <div className="text-2xl font-bold text-blue-600">{stats.total_participants || 0}</div>
           </CardContent>
         </Card>
 
@@ -143,9 +116,7 @@ async function TournamentDashboardContent({
             <Target className="h-4 w-4 text-purple-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-purple-600">
-              {stats.total_teams || 0}
-            </div>
+            <div className="text-2xl font-bold text-purple-600">{stats.total_teams || 0}</div>
           </CardContent>
         </Card>
 
@@ -155,9 +126,7 @@ async function TournamentDashboardContent({
             <Trophy className="h-4 w-4 text-amber-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-amber-600">
-              {stats.total_classes || 0}
-            </div>
+            <div className="text-2xl font-bold text-amber-600">{stats.total_classes || 0}</div>
           </CardContent>
         </Card>
 
@@ -167,9 +136,7 @@ async function TournamentDashboardContent({
             <Award className="h-4 w-4 text-orange-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-orange-600">
-              {stats.total_matches || 0}
-            </div>
+            <div className="text-2xl font-bold text-orange-600">{stats.total_matches || 0}</div>
           </CardContent>
         </Card>
 
@@ -179,9 +146,7 @@ async function TournamentDashboardContent({
             <Calendar className="h-4 w-4 text-green-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">
-              {stats.completed_matches || 0}
-            </div>
+            <div className="text-2xl font-bold text-green-600">{stats.completed_matches || 0}</div>
           </CardContent>
         </Card>
       </div>
@@ -191,25 +156,19 @@ async function TournamentDashboardContent({
         <Card>
           <CardHeader>
             <CardTitle>Tournament Details</CardTitle>
-            <CardDescription>
-              Basic information about this tournament
-            </CardDescription>
+            <CardDescription>Basic information about this tournament</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             {tournament.description && (
               <div>
-                <h3 className="text-sm font-medium text-gray-500">
-                  Description
-                </h3>
+                <h3 className="text-sm font-medium text-gray-500">Description</h3>
                 <p className="mt-1">{tournament.description}</p>
               </div>
             )}
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <h3 className="text-sm font-medium text-gray-500">
-                  Start Date
-                </h3>
+                <h3 className="text-sm font-medium text-gray-500">Start Date</h3>
                 <p className="mt-1">{startDate}</p>
               </div>
               <div>
@@ -230,12 +189,8 @@ async function TournamentDashboardContent({
 
             {tournament.registration_fee && (
               <div>
-                <h3 className="text-sm font-medium text-gray-500">
-                  Registration Fee
-                </h3>
-                <p className="mt-1">
-                  IDR {tournament.registration_fee.toLocaleString()}
-                </p>
+                <h3 className="text-sm font-medium text-gray-500">Registration Fee</h3>
+                <p className="mt-1">IDR {tournament.registration_fee.toLocaleString()}</p>
               </div>
             )}
 
@@ -274,9 +229,7 @@ async function TournamentDashboardContent({
 
             {tournament.referee_chief && (
               <div>
-                <h3 className="text-sm font-medium text-gray-500">
-                  Chief Referee
-                </h3>
+                <h3 className="text-sm font-medium text-gray-500">Chief Referee</h3>
                 <p className="mt-1">{tournament.referee_chief}</p>
               </div>
             )}
@@ -290,9 +243,7 @@ async function TournamentDashboardContent({
 
             {tournament.admin_tournament && (
               <div>
-                <h3 className="text-sm font-medium text-gray-500">
-                  Tournament Admin
-                </h3>
+                <h3 className="text-sm font-medium text-gray-500">Tournament Admin</h3>
                 <p className="mt-1">{tournament.admin_tournament}</p>
               </div>
             )}
@@ -332,23 +283,13 @@ async function TournamentDashboardContent({
         </Button>
       </div>
     </div>
-  );
+  )
 }
 
-export default function TournamentDashboardPage({
-  params,
-}: {
-  params: { id: string };
-}) {
+export default function TournamentDashboardPage({ params }: { params: { id: string } }) {
   return (
-    <Suspense
-      fallback={
-        <div className="min-h-screen flex items-center justify-center">
-          Loading...
-        </div>
-      }
-    >
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
       <TournamentDashboardContent params={params} />
     </Suspense>
-  );
+  )
 }
